@@ -31,7 +31,7 @@ class AdminUser extends Admincommon
 
         //格式化数据
         foreach($data as $k=>$v){
-            $data[$k]['create_time']=date("Y-m-d H:i:s",$v['create_time']);
+            $data[$k]['login_time']=empty($v['login_time'])?'':date("Y-m-d H:i:s",$v['login_time']);
         }
         //权限验证
         $auth['add']=$this->isAllow('admin_user_add');

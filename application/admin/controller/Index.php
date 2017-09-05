@@ -13,10 +13,14 @@ class Index extends Admincommon
 
     public function index()
     {
+        //管理员管理
         $auth['admin_menu']=$this->isAllow('admin_menu');
         $auth['admin_user_index']=$this->isAllow('admin_user_index','AdminUser');
         $auth['admin_group_index']=$this->isAllow('admin_group_index','AdminGroup');
         $auth['admin_rule_index']=$this->isAllow('admin_rule_index','AdminRule');
+        //文档管理
+        $auth['documents_menu']=$this->isAllow('documents_menu');
+
         $this->assign('auth',$auth);
         $this->assign('session',session('admin'));
         return $this->fetch();

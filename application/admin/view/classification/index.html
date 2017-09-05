@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        X-admin v1.0
+    </title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="__X-admin__/css/x-admin.css" media="all">
+</head>
+<body>
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a><cite>首页</cite></a>
+              <a><cite>文档管理</cite></a>
+              <a><cite>分类管理</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"  href="javascript:location.replace(location.href);" title="刷新"><i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <xblock style="height: 38px;"><button class="layui-btn" onclick="click_add('添加权限','{:url(\'add\')}','500','400')"><i class="layui-icon">&#xe608;</i>添加</button></xblock>
+    <div style="width:100%;borser:1px solid red;">
+        <div id="content_left" style="width:30%;float:left;">
+            <ul id="arctype"></ul>
+        </div>
+        <div id="content_right" style="width:68%;float:right;position:fixed;top:100px;;right:20px;;display: none;">
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>
+                        分类名称
+                    </th>
+                    <th>
+                        排序
+                    </th>
+                    <th>
+                        描述
+                    </th>
+                    <th>
+                        父类名称
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="name">
+
+                    </td>
+                    <td id="sorting">
+
+                    </td>
+                    <td id="description">
+
+                    </td>
+                    <td id="parentName">
+
+                    </td>
+                    <td class="td-manage">
+
+                        <a title="编辑" id="a_edit" href="javascript:;" onclick=""
+                           class="ml-5" style="text-decoration:none">
+                            <i class="layui-icon">&#xe642;</i>
+                        </a>
+
+
+                        <a title="删除" id="a_del" href="javascript:;" onclick=""
+                           style="text-decoration:none">
+                            <i class="layui-icon">&#xe640;</i>
+                        </a>
+
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+<script src="__X-admin__/lib/layui/layui.js" charset="utf-8"></script>
+<script src="__X-admin__/js/x-layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['laydate','element','laypage','layer','tree'], function(){
+        pidname={$arctype};
+        $ = layui.jquery;//jquery
+        lement = layui.element();//面包导航
+        layer = layui.layer;//弹出层
+
+        //以上模块根据需要引入
+        layui.tree({
+            elem: '#arctype' //传入元素选择器
+            ,nodes: {$data}
+            ,click:function(node){
+                var pid=node.pid;
+                $('#name').text(node.name);
+                $('#sorting').text(node.sorting);
+                $('#description').text(node.description);
+                $('#parentName').text(pidname[pid]);
+                $('#a_edit').attr('onclick',"click_edit('编辑','{:url(\'edit\')}','"+node.id+"','500','400')");
+                $('#a_del').attr('onclick',"admin_del(this,'"+node.id+"')");
+                $('#content_right').css('display','block')
+            }
+        });
+    });
+    /*添加*/
+    function click_add(title,url,w,h){
+        x_admin_show(title,url,w,h);
+    }
+    //编辑
+    function click_edit (title,url,id,w,h) {
+        x_admin_show(title,url+'?id='+id,w,h);
+    }
+    /*删除*/
+    function click_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            //发异步删除数据
+            $.ajax({
+                type: 'POST',
+                url: "{:url('doDelete')}",
+                data: {id:id},
+                dataType: "json",
+                success: function(res){
+                    if(res.success){
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:300},function(){
+                            location.replace(location.href);
+                        });
+                    }else{
+                        layer.msg('删除失败!',{icon: 2,time:1000});
+                    }
+                },
+                error:function(res){
+                    layer.msg('请求失败!',{icon: 2,time:1000});
+                }
+            });
+
+        });
+    }
+</script>
+</body>
+</html>
